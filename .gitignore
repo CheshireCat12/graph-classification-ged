@@ -161,3 +161,4 @@ cython_debug/
 
 data_tmp/
 tmp_data/
+tmp_results/

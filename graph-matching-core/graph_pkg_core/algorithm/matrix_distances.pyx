@@ -128,7 +128,10 @@ cdef class MatrixDistances:
         distances = np.array(results)
         return distances
 
-    cpdef double _helper_parallel(self, Graph graph_train, Graph graph_test, bint heuristic=False):
+    cpdef double _helper_parallel(self,
+                                  Graph graph_train,
+                                  Graph graph_test,
+                                  bint heuristic=False):
         dist = self.ged.compute_edit_distance(graph_train, graph_test, heuristic)
 
         return dist
