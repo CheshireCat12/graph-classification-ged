@@ -24,7 +24,6 @@ install_requires = [
     'bunch',
     'sklearn',
     'pygad',
-    'tqdm',
 ]
 
 
@@ -53,7 +52,6 @@ def extension_modules():
     return ext
 
 
-
 # Create automatically the extenstions
 extensions = extension_modules()
 
@@ -62,14 +60,14 @@ for e in extensions:
                            'embedsignature': True}
 
 setup(name='graph-matching-core',
-      version='0.1.2',
+      version='1.0',
       description='A graph module using cython',
       author='Anthony Gillioz',
       author_email='anthony.gillioz@outlook.com',
       install_requires=install_requires,
       setup_requires=[
           'setuptools>=18.0',  # automatically handles Cython extensions
-          'cython>=0.28.4',
+          'cython>=0.29.14',
       ],
       ext_modules=extensions,
       )

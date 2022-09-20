@@ -1,4 +1,3 @@
-from pathlib import Path
 import json
 
 
@@ -12,8 +11,6 @@ cdef class Logger:
 
     def __init__(self, str filename):
         self.filename = filename
-        self.folder = '/'.join(filename.split('/')[:-1])
-        Path(self.folder).mkdir(parents=True, exist_ok=True)
         self.__data = {}
         self.lvl_name = None
 
@@ -27,7 +24,7 @@ cdef class Logger:
     def set_lvl(self, str lvl_name):
         """
         Change the level of the logger.
-        It is used to log experiment with multiple loop
+        It is used to log experiment with multiple loops
         :param lvl_name:
         :return:
         """

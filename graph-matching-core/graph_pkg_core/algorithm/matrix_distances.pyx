@@ -4,6 +4,9 @@ cimport numpy as np
 from progress.bar import Bar
 from multiprocessing import Pool
 
+from graph_pkg_core.algorithm.graph_edit_distance cimport GED
+from graph_pkg_core.graph.graph cimport Graph
+
 import psutil
 from itertools import product
 

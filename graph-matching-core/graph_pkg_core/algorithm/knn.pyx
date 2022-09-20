@@ -2,6 +2,8 @@ import numpy as np
 cimport numpy as np
 from collections import Counter
 
+from graph_pkg_core.algorithm.graph_edit_distance cimport GED
+from graph_pkg_core.algorithm.matrix_distances cimport MatrixDistances
 
 cdef class KNNClassifier:
     """
@@ -19,6 +21,7 @@ cdef class KNNClassifier:
         """
         self.ged = ged
         self.mat_dist = MatrixDistances(ged, parallel, verbose=verbose)
+        self.current_distances = None
         self.verbose = verbose
 
     cpdef void train(self, list graphs_train, list labels_train):
