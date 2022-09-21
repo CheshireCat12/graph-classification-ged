@@ -360,7 +360,4 @@ if __name__ == '__main__':
 
     parse_args = args_parser.parse_args()
 
-    if parse_args.verbose:
-        logging.basicConfig(level=logging.INFO)
-
     main(parse_args)
