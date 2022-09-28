@@ -7,11 +7,12 @@ from typing import List
 
 import numpy as np
 from graph_pkg_core.algorithm.knn import KNNClassifier
+from graph_pkg_core.graph.graph import Graph
 from graph_pkg_core.coordinator.coordinator import Coordinator
-from graph_pkg_core.utils.logger import Logger
 from tqdm import tqdm
 
 from src.utils import write_distances, write_predictions
+from src.utils import Logger
 
 AccuracyTracker = namedtuple('AccuracyTracker',
                              ['acc', 'best_alpha', 'best_k'])
@@ -21,8 +22,8 @@ def train(coordinator: Coordinator,
           logger: Logger,
           alphas: List[float],
           ks: List[int],
-          X_train: List,
-          X_val: List,
+          X_train: List[Graph],
+          X_val: List[Graph],
           y_train: List[int],
           y_val: List[int],
           n_cores: int) -> AccuracyTracker:
@@ -89,8 +90,8 @@ def train(coordinator: Coordinator,
 def evaluate(coordinator: Coordinator,
              logger: Logger,
              acc_tracker: AccuracyTracker,
-             X_train: List,
-             X_test: List,
+             X_train: List[Graph],
+             X_test: List[Graph],
              y_train: List[int],
              y_test: List[int],
              n_cores: int,
