@@ -4,9 +4,12 @@ from typing import List, Tuple
 
 from graph_pkg_core.coordinator.coordinator import Coordinator
 
+from src.train_eval import train, evaluate
 from src.utils import set_global_verbose, Logger
 from src.utils import train_val_test_split
-from src.train_eval import train, evaluate
+
+LOGGER_FILE = 'results_general_GED.json'
+
 
 def graph_classifier(root_dataset: str,
                      parameters_edit_cost: Tuple,
@@ -45,7 +48,7 @@ def graph_classifier(root_dataset: str,
 
     # Init logger
     logger_filename = os.path.join(folder_results,
-                                   'results_general.json')
+                                   LOGGER_FILE)
     logger = Logger(logger_filename)
 
     # Save all the input parameters
