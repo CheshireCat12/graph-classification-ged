@@ -81,34 +81,3 @@ def load_graphs(path_dataset: str,
         classes = df['class'].to_numpy()
 
     return graphs, classes
-
-from sklearn.model_selection import train_test_split
-
-def train_val_test_split(X: List[Graph],
-                         y: Iterable,
-                         val_size: float=0.2,
-                         test_size: float=0.2):
-    """
-
-    Args:
-        X:
-        y:
-        val_size:
-        test_size:
-
-    Returns:
-
-    """
-    # First get the val split
-    X_train, X_val, y_train, y_val = train_test_split(X,
-                                                      y,
-                                                      test_size=val_size,
-                                                      random_state=1)
-
-    test_size = test_size / (1 - val_size)
-    X_train, X_test, y_train, y_test = train_test_split(X_train,
-                                                        y_train,
-                                                        test_size=test_size,
-                                                        random_state=1)
-
-    return X_train, X_val, X_test, y_train, y_val, y_test
