@@ -144,3 +144,26 @@ def write_distances(filename: str, distances: np.ndarray) -> None:
     with open(filename, 'wb') as file:
         np.save(file, distances)
 
+
+def write_GT_labels(filename: str,
+                    GT_labels: List[int]) -> None:
+    """
+    Write GT labels in `filename`.
+
+    Args:
+        filename: File where to save the predictions.
+        GT_labels: Iterable of the GT labels
+
+    Returns:
+
+    """
+
+    with open(filename, 'w') as csv_file:
+        fieldnames = ['GT_labels']
+
+        writer = csv.DictWriter(csv_file,
+                                fieldnames=fieldnames)
+
+        writer.writeheader()
+        for GT_lbl in GT_labels:
+            writer.writerow({'GT_labels': GT_lbl})

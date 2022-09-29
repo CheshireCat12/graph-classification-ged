@@ -6,7 +6,7 @@ from graph_pkg_core.coordinator.coordinator import Coordinator
 
 from src.train_eval import train, evaluate
 from src.utils import set_global_verbose, Logger
-from src.utils import train_val_test_split
+from src.utils import train_val_test_split, write_GT_labels
 
 LOGGER_FILE = 'results_general_GED.json'
 
@@ -19,6 +19,7 @@ def graph_classifier(root_dataset: str,
                      seed: int,
                      n_cores: int,
                      folder_results: str,
+                     save_gt_labels: bool,
                      save_predictions: bool,
                      save_distances: bool,
                      verbose: bool,
@@ -34,6 +35,7 @@ def graph_classifier(root_dataset: str,
         seed:
         n_cores:
         folder_results:
+        save_gt_labels:
         save_predictions:
         save_distances:
         verbose:
@@ -85,4 +87,4 @@ def graph_classifier(root_dataset: str,
              list(y_train), list(y_test),
              n_cores,
              folder_results,
-             save_predictions, save_distances)
+             save_gt_labels, save_predictions, save_distances)

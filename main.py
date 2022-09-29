@@ -12,6 +12,7 @@ def main(args):
                      args.seed,
                      args.n_cores,
                      args.folder_results,
+                     args.save_gt_labels,
                      args.save_predictions,
                      args.save_distances,
                      args.verbose,
@@ -63,6 +64,9 @@ if __name__ == '__main__':
                                   'If n_cores == 0 then it is run without parallelization.'
                                   'If n_cores > 0 then use this number of cores')
 
+    args_parser.add_argument('--save_gt_labels',
+                             action='store_true',
+                             help='save the ground truth classes if activated')
     args_parser.add_argument('--save_predictions',
                              action='store_true',
                              help='save the predicted classes if activated')

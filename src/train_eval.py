@@ -11,7 +11,7 @@ from graph_pkg_core.graph.graph import Graph
 from graph_pkg_core.coordinator.coordinator import Coordinator
 from tqdm import tqdm
 
-from src.utils import write_distances, write_predictions
+from src.utils import write_GT_labels, write_distances, write_predictions
 from src.utils import Logger
 
 AccuracyTracker = namedtuple('AccuracyTracker',
@@ -96,6 +96,7 @@ def evaluate(coordinator: Coordinator,
              y_test: List[int],
              n_cores: int,
              folder_results: str,
+             save_gt_labels: bool,
              save_predictions: bool,
              save_distances: bool) -> None:
     """
@@ -140,6 +141,11 @@ def evaluate(coordinator: Coordinator,
 
     logging.info(f'Classification accuracy (test) {current_acc: .2f}'
                  f'(alpha: {acc_tracker.best_alpha}, k: {acc_tracker.best_k})')
+
+    if save_gt_labels:
+        file_gt_labels = os.path.join(folder_results,
+                                      'gt_labels.csv')
+        write_GT_labels(file_gt_labels, list(y_train) + list(y_test))
 
     if save_predictions:
         file_predictions = os.path.join(folder_results,
