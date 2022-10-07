@@ -1,21 +1,17 @@
 import logging
 import os
-from collections import namedtuple
 from itertools import product
 from time import time
 from typing import List
 
 import numpy as np
 from graph_pkg_core.algorithm.knn import KNNClassifier
-from graph_pkg_core.graph.graph import Graph
 from graph_pkg_core.coordinator.coordinator import Coordinator
+from graph_pkg_core.graph.graph import Graph
 from tqdm import tqdm
 
-from src.utils import write_GT_labels, write_distances, write_predictions
 from src.utils import Logger
-
-AccuracyTracker = namedtuple('AccuracyTracker',
-                             ['acc', 'best_alpha', 'best_k'])
+from src.utils import write_GT_labels, write_distances, write_predictions, AccuracyTracker
 
 
 def train(coordinator: Coordinator,

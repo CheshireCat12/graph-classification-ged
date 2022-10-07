@@ -6,7 +6,7 @@ from graph_pkg_core.coordinator.coordinator import Coordinator
 
 from src.train_eval import train, evaluate
 from src.utils import set_global_verbose, Logger
-from src.utils import train_val_test_split, write_GT_labels
+from src.utils import train_val_test_split, AccuracyTracker
 
 LOGGER_FILE = 'results_general_GED.json'
 
@@ -68,13 +68,17 @@ def graph_classifier(root_dataset: str,
                                                                           test_size=size_test,
                                                                           random_state=seed)
 
-    # Optimize the hyperparameters
-    acc_tracker = train(coordinator,
-                        logger,
-                        alphas, ks,
-                        X_train, X_val,
-                        list(y_train), list(y_val),
-                        n_cores)
+    # Check if there is only a single value for the alphas and ks
+    if len(alphas) * len(ks) == 1:
+        acc_tracker = AccuracyTracker(-1, alphas[0], ks[0])
+    else:
+        # Optimize the hyperparameters
+        acc_tracker = train(coordinator,
+                            logger,
+                            alphas, ks,
+                            X_train, X_val,
+                            list(y_train), list(y_val),
+                            n_cores)
 
     # Merge train and validation set for the final evaluation
     X_train = X_train + X_val

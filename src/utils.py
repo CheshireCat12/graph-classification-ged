@@ -1,9 +1,13 @@
 import csv
 import json
+from collections import namedtuple
 from typing import Iterable, List
 
 import numpy as np
 from sklearn.model_selection import train_test_split
+
+AccuracyTracker = namedtuple('AccuracyTracker',
+                             ['acc', 'best_alpha', 'best_k'])
 
 
 def set_global_verbose(verbose: bool = False) -> None:
