@@ -19,7 +19,11 @@ def main(args):
                      args)
 
 
+DEFAULT_ALPHAS = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+DEFAULT_KS = [3, 5, 7]
+
 if __name__ == '__main__':
+
     args_parser = argparse.ArgumentParser(description='Graph reduction by coarsening')
     subparser = args_parser.add_subparsers()
 
@@ -32,12 +36,12 @@ if __name__ == '__main__':
     # Hyperparameters to test
     args_parser.add_argument('--alphas',
                              nargs='*',
-                             default=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+                             default=DEFAULT_ALPHAS,
                              type=float,
                              help='List of alphas to test')
     args_parser.add_argument('--ks',
                              nargs='*',
-                             default=[3, 5, 7],
+                             default=DEFAULT_KS,
                              type=int,
                              help='List of ks to test (k being the number of neighbors for the KNN)')
 
@@ -85,5 +89,9 @@ if __name__ == '__main__':
                              help='Activate verbose print')
 
     parse_args = args_parser.parse_args()
+
+    if parse_args.alphas == [0] and parse_args.ks == [0]:
+        parse_args.alphas = DEFAULT_ALPHAS
+        parse_args.ks = DEFAULT_KS
 
     main(parse_args)
