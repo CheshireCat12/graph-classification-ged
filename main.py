@@ -24,7 +24,7 @@ DEFAULT_KS = [3, 5, 7]
 
 if __name__ == '__main__':
 
-    args_parser = argparse.ArgumentParser(description='Graph reduction by coarsening')
+    args_parser = argparse.ArgumentParser(description='Graph Classification Using KNN with GED')
     subparser = args_parser.add_subparsers()
 
     args_parser.add_argument('--root_dataset',
@@ -76,7 +76,7 @@ if __name__ == '__main__':
                              help='save the predicted classes if activated')
     args_parser.add_argument('--save_distances',
                              action='store_true',
-                             help='Save the GEDs between the train and test graphs')
+                             help='Save all the GEDs if activated')
 
     args_parser.add_argument('--folder_results',
                              type=str,

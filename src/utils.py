@@ -1,13 +1,8 @@
 import csv
 import json
-from collections import namedtuple
-from typing import Iterable, List
+from typing import List
 
 import numpy as np
-from sklearn.model_selection import train_test_split
-
-AccuracyTracker = namedtuple('AccuracyTracker',
-                             ['acc', 'best_alpha', 'best_k'])
 
 
 def set_global_verbose(verbose: bool = False) -> None:
@@ -30,38 +25,6 @@ def set_global_verbose(verbose: bool = False) -> None:
         logging.basicConfig(level=logging.INFO)
     else:
         tqdm.__init__ = partialmethod(tqdm.__init__, disable=not verbose)
-
-
-def train_val_test_split(X: List,
-                         y: Iterable,
-                         val_size: float = 0.2,
-                         test_size: float = 0.2,
-                         random_state=1):
-    """
-
-    Args:
-        X:
-        y:
-        val_size:
-        test_size:
-        random_state:
-
-    Returns:
-
-    """
-    # First get the val split
-    X_train, X_val, y_train, y_val = train_test_split(X,
-                                                      y,
-                                                      test_size=val_size,
-                                                      random_state=random_state)
-
-    test_size = test_size / (1 - val_size)
-    X_train, X_test, y_train, y_test = train_test_split(X_train,
-                                                        y_train,
-                                                        test_size=test_size,
-                                                        random_state=random_state)
-
-    return X_train, X_val, X_test, y_train, y_val, y_test
 
 
 class Logger:
