@@ -10,9 +10,10 @@ from sklearn.neighbors import KNeighborsClassifier
 from tqdm import tqdm
 
 from graph_pkg_core.coordinator.coordinator import Coordinator
-from src.utils import set_global_verbose, Logger, write_distances, write_GT_labels, write_predictions
+from src.utils import set_global_verbose, Logger, write_distances, write_GT_labels, write_predictions, save_acc_results
 
-LOGGER_FILE = 'results_general_GED.json'
+PARAMETERS_FILE = 'parameters.json'
+RESULTS_FILE = 'acc_results.json'
 
 
 def load_distances(coordinator: Coordinator,
@@ -106,7 +107,6 @@ def cross_validate(distances: List[np.ndarray],
             clf = GridSearchCV(estimator=KNeighborsClassifier(metric='precomputed'),
                                param_grid=param_grid,
                                n_jobs=n_cores,
-                               verbose=1,
                                cv=inner_cv)
             clf.fit(alpha_dist[np.ix_(train_index, train_index)], classes[train_index])
 
@@ -140,15 +140,15 @@ def cross_validate(distances: List[np.ndarray],
 
 def graph_classifier(root_dataset: str,
                      parameters_edit_cost: Tuple,
-                     size_splits: List[float],
                      alphas: List[float],
                      ks: List[int],
-                     seed: int,
+                     n_trial: int,
+                     n_outer_cv: int,
+                     n_inner_cv: int,
                      n_cores: int,
                      folder_results: str,
                      save_gt_labels: bool,
                      save_predictions: bool,
-                     save_distances: bool,
                      verbose: bool,
                      args):
     """
@@ -156,15 +156,15 @@ def graph_classifier(root_dataset: str,
     Args:
         root_dataset:
         parameters_edit_cost:
-        size_splits:
         alphas:
         ks:
-        seed:
+        n_trial:
+        n_outer_cv:
+        n_inner_cv:
         n_cores:
         folder_results:
         save_gt_labels:
         save_predictions:
-        save_distances:
         verbose:
         args:
 
@@ -180,7 +180,7 @@ def graph_classifier(root_dataset: str,
 
     # Init logger
     logger_filename = join(folder_results,
-                           LOGGER_FILE)
+                           PARAMETERS_FILE)
     logger = Logger(logger_filename)
 
     # Save all the input parameters
@@ -198,15 +198,12 @@ def graph_classifier(root_dataset: str,
                               'gt_labels.csv')
         write_GT_labels(file_gt_labels, coordinator.classes)
 
-    n_trial = 2
-    n_outer = 2
-    n_inner = 2
-
     param_grid = {'n_neighbors': ks}
     scoring = {'acc': 'accuracy'}
+    trial_results = []
     for c_seed in range(n_trial):
-        outer_cv = StratifiedKFold(n_splits=n_outer, shuffle=True, random_state=c_seed)
-        inner_cv = StratifiedKFold(n_splits=n_inner, shuffle=True, random_state=c_seed)
+        outer_cv = StratifiedKFold(n_splits=n_outer_cv, shuffle=True, random_state=c_seed)
+        inner_cv = StratifiedKFold(n_splits=n_inner_cv, shuffle=True, random_state=c_seed)
 
         scores = cross_validate(distances=distances,
                                 classes=coordinator.classes,
@@ -218,5 +215,5 @@ def graph_classifier(root_dataset: str,
                                 save_predictions=save_predictions,
                                 current_trial=c_seed,
                                 folder_results=folder_results)
-
-        print(scores)
+        trial_results.append(scores)
+        save_acc_results(join(folder_results, RESULTS_FILE), trial_results)

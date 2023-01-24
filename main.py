@@ -6,15 +6,15 @@ from src.graph_classification import graph_classifier
 def main(args):
     graph_classifier(args.root_dataset,
                      args.parameters_edit_cost,
-                     args.size_splits,
                      args.alphas,
                      args.ks,
-                     args.seed,
+                     args.n_trials,
+                     args.n_outer_cv,
+                     args.n_inner_cv,
                      args.n_cores,
                      args.folder_results,
                      args.save_gt_labels,
                      args.save_predictions,
-                     args.save_distances,
                      args.verbose,
                      args)
 
@@ -33,6 +33,11 @@ if __name__ == '__main__':
                              default='./data',
                              help='Root of the dataset')
 
+    args_parser.add_argument('--parameters_edit_cost',
+                             nargs='+',
+                             default=(1., 1., 1., 1., 'euclidean'),
+                             help='Tuple with the cost for the edit operations')
+
     # Hyperparameters to test
     args_parser.add_argument('--alphas',
                              nargs='*',
@@ -46,21 +51,18 @@ if __name__ == '__main__':
                              help='List of ks to test (k being the number of neighbors for the KNN)')
 
     # Parameters used during the optimization process
-    args_parser.add_argument('--size_splits',
-                             nargs=3,
-                             type=float,
-                             default=[0.6, 0.2, 0.2],
-                             help='Arguments that set the size of the splits'
-                                  '(e.g., --size_split size_train size_val size_test')
-    args_parser.add_argument('--parameters_edit_cost',
-                             nargs='+',
-                             default=(1., 1., 1., 1., 'euclidean'),
-                             help='Tuple with the cost for the edit operations')
-
-    args_parser.add_argument('--seed',
-                             default=1,
+    args_parser.add_argument('--n_trials',
+                             default=10,
                              type=int,
-                             help='Choose the random seed')
+                             help='Number of cross-validation to perform')
+    args_parser.add_argument('--n_outer_cv',
+                             default=10,
+                             type=int,
+                             help='Number of outer loops in the cross-validation')
+    args_parser.add_argument('--n_inner_cv',
+                             default=5,
+                             type=int,
+                             help='Number of inner loops in the cross-validation')
     args_parser.add_argument('--n_cores',
                              default=0,
                              type=int,
@@ -74,9 +76,6 @@ if __name__ == '__main__':
     args_parser.add_argument('--save_predictions',
                              action='store_true',
                              help='save the predicted classes if activated')
-    args_parser.add_argument('--save_distances',
-                             action='store_true',
-                             help='Save all the GEDs if activated')
 
     args_parser.add_argument('--folder_results',
                              type=str,

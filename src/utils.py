@@ -134,3 +134,17 @@ def write_GT_labels(filename: str,
         writer.writeheader()
         for GT_lbl in GT_labels:
             writer.writerow({'GT_labels': GT_lbl})
+
+def save_acc_results(file_results: str, cv_predictions: List) -> None:
+    """
+    Save the list of cross-validation scores
+
+    Args:
+        file_results:
+        cv_predictions:
+
+    Returns:
+
+    """
+    with open(file_results, 'w') as write_file:
+        json.dump(cv_predictions, write_file, indent=4)
