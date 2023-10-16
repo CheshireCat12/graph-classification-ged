@@ -5,6 +5,14 @@ from typing import List
 import numpy as np
 
 
+def seed_everything(seed: int) -> None:
+    import random
+    import numpy as np
+
+    random.seed(seed)
+    np.random.seed(seed)
+
+
 def set_global_verbose(verbose: bool = False) -> None:
     """
     Set the global verbose.
@@ -97,6 +105,29 @@ def write_predictions(filename: str,
             writer.writerow({'predictions': pred, 'GT_labels': GT_lbl})
 
 
+
+def write_times(filename: str, times: List[float]) -> None:
+    """
+    Save the computation time in `.csv` file
+
+    Args:
+        filename: File where to save the GEDs.
+        distances: `np.array` containing the GEDs
+
+    Returns:
+
+    """
+    with open(filename, 'w') as csv_file:
+        fieldnames = ['time']
+
+        writer = csv.DictWriter(csv_file,
+                                fieldnames=fieldnames)
+
+        writer.writeheader()
+        for time in times:
+            writer.writerow({'time': time})
+
+
 def write_distances(filename: str, distances: np.ndarray) -> None:
     """
     Save the GEDs in `.npy` file
@@ -135,6 +166,7 @@ def write_GT_labels(filename: str,
         for GT_lbl in GT_labels:
             writer.writerow({'GT_labels': GT_lbl})
 
+
 def save_acc_results(file_results: str, cv_predictions: List) -> None:
     """
     Save the list of cross-validation scores
@@ -148,3 +180,35 @@ def save_acc_results(file_results: str, cv_predictions: List) -> None:
     """
     with open(file_results, 'w') as write_file:
         json.dump(cv_predictions, write_file, indent=4)
+
+from cyged import load_graphs as load_graphml
+from os.path import join
+import pickle
+import pandas
+
+def _load_pkl_graphs(root_dataset: str, load_classes: bool):
+    filename = join(root_dataset, 'graphs.pkl')
+
+    with open(filename, 'rb') as f:
+        graphs = pickle.load(f)
+
+    if load_classes:
+        classes_file = join(root_dataset, 'graph_classes.csv')
+        df = pandas.read_csv(classes_file)
+        classes = df['class'].to_numpy()
+
+    return graphs, classes
+
+
+def load_graphs(root_dataset: str, file_extension: str, load_classes: bool):
+    if file_extension == 'graphml':
+        graphs, lbls = load_grahml(root_dataset=root_dataset,
+                                   file_extension=file_extension,
+                                   load_classes=load_classes)
+        return graphs, lbls
+
+    if file_extension == 'pkl':
+        graphs, lbls = _load_pkl_graphs(root_dataset=root_dataset,
+                                        load_classes=load_classes)
+
+        return graphs, lbls

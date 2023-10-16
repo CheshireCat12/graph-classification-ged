@@ -1,16 +1,18 @@
 from os.path import join, isfile
 from pathlib import Path
 from typing import List, Tuple
+from time import time
 
 import numpy as np
-from graph_pkg_core.algorithm.matrix_distances import MatrixDistances
 from sklearn.metrics import get_scorer
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from tqdm import tqdm
 
-from graph_pkg_core.coordinator.coordinator import Coordinator
-from src.utils import set_global_verbose, Logger, write_distances, write_GT_labels, write_predictions, save_acc_results
+from cyged import Coordinator
+from cyged import MatrixDistances
+from src.utils import set_global_verbose, Logger, write_distances, write_times, write_GT_labels, write_predictions, save_acc_results, \
+    seed_everything, load_graphs
 
 PARAMETERS_FILE = 'parameters.json'
 RESULTS_FILE = 'acc_results.json'
@@ -41,11 +43,15 @@ def load_distances(coordinator: Coordinator,
     matrix_dist = MatrixDistances(coordinator.ged,
                                   parallel=is_parallel)
     distances = []
+    times = []
 
     for alpha in tqdm(alphas, desc='Load or Compute GED matrices'):
         file_distances = join(folder_results,
                               'distances',
                               f'distances_alpha{alpha}.npy')
+
+        file_times = join(folder_results,
+                          f'ged_times.csv')
 
         # Check if the file containing the distances for the particular alpha exists
         if isfile(file_distances):
@@ -54,11 +60,15 @@ def load_distances(coordinator: Coordinator,
         else:
             # Otherwise compute the GEDs
             coordinator.edit_cost.update_alpha(alpha)
+            time_a = time()
             dist = np.array(matrix_dist.calc_matrix_distances(coordinator.graphs,
                                                               coordinator.graphs,
                                                               num_cores=n_cores))
+            time_b = time()
+            times.append(time_b-time_a)
 
             write_distances(file_distances, dist)
+            write_times(file_times, times)
 
         distances.append(dist)
 
@@ -139,6 +149,7 @@ def cross_validate(distances: List[np.ndarray],
 
 
 def graph_classifier(root_dataset: str,
+                     graph_format: str,
                      parameters_edit_cost: Tuple,
                      alphas: List[float],
                      ks: List[int],
@@ -172,6 +183,7 @@ def graph_classifier(root_dataset: str,
 
     """
     set_global_verbose(verbose)
+    seed_everything(7)
 
     # Create folders used later
     Path(folder_results).mkdir(parents=True, exist_ok=True)
@@ -187,8 +199,13 @@ def graph_classifier(root_dataset: str,
     logger.data['parameters'] = vars(args)
     logger.save_data()
 
+    graphs, lbls = load_graphs(root_dataset=root_dataset,
+                               file_extension=graph_format,
+                               load_classes=True)
+
     coordinator = Coordinator(parameters_edit_cost,
-                              root_dataset)
+                              graphs=graphs,
+                              classes=lbls)
 
     distances = load_distances(coordinator, alphas, n_cores, folder_results)
 
