@@ -1,17 +1,18 @@
 from os.path import join, isfile
 from pathlib import Path
-from typing import List, Tuple
 from time import time
+from typing import List, Tuple
 
 import numpy as np
+from cyged import Coordinator
+from cyged import MatrixDistances
 from sklearn.metrics import get_scorer
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from tqdm import tqdm
 
-from cyged import Coordinator
-from cyged import MatrixDistances
-from src.utils import set_global_verbose, Logger, write_distances, write_times, write_GT_labels, write_predictions, save_acc_results, \
+from src.utils import set_global_verbose, Logger, write_distances, write_times, write_GT_labels, write_predictions, \
+    save_acc_results, \
     seed_everything, load_graphs
 
 PARAMETERS_FILE = 'parameters.json'
@@ -65,7 +66,7 @@ def load_distances(coordinator: Coordinator,
                                                               coordinator.graphs,
                                                               num_cores=n_cores))
             time_b = time()
-            times.append(time_b-time_a)
+            times.append(time_b - time_a)
 
             write_distances(file_distances, dist)
             write_times(file_times, times)
@@ -216,7 +217,10 @@ def graph_classifier(root_dataset: str,
         write_GT_labels(file_gt_labels, coordinator.classes)
 
     param_grid = {'n_neighbors': ks}
-    scoring = {'acc': 'accuracy'}
+    scoring = {'acc': 'accuracy',
+               'balanced_acc': 'balanced_accuracy',
+               }
+
     trial_results = []
     for c_seed in range(n_trial):
         outer_cv = StratifiedKFold(n_splits=n_outer_cv, shuffle=True, random_state=c_seed)
